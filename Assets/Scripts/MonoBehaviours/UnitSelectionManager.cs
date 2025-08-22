@@ -25,12 +25,12 @@ namespace MonoBehaviours
                  
                  for (int i = 0; i < unitMoverArray.Length; i++)
                  {
-                     Debug.Log($"Entity {entityArray[i].Index} is moving to {mouseWorldPosition}");
                      var unitMover = unitMoverArray[i];
                      unitMover.TargetPosition = mouseWorldPosition;
-                     entityManager.SetComponentData(entityArray[i], unitMover); 
-                     
+                     unitMoverArray[i] = unitMover;
+                     //entityManager.SetComponentData(entityArray[i], unitMover); 
                  }
+                 entityQuery.CopyFromComponentDataArray(unitMoverArray);
             }
         }
     }
