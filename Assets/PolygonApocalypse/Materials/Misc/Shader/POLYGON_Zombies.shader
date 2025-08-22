@@ -259,6 +259,17 @@ Shader "SyntyStudios/Blood"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 
+            TEXTURE2D(_BaseMap);            SAMPLER(sampler_BaseMap);
+
+            CBUFFER_START(UnityPerMaterial)
+                float4 _BaseMap_ST;
+                half4 _BaseColor;
+                half _Cutoff;
+            CBUFFER_END
+
+            float3 _LightDirection;
+            float3 _LightPosition;
+
             struct Attributes
             {
                 float4 positionOS   : POSITION;
@@ -338,6 +349,14 @@ Shader "SyntyStudios/Blood"
             #pragma shader_feature_local_fragment _ALPHATEST_ON
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            TEXTURE2D(_BaseMap);            SAMPLER(sampler_BaseMap);
+
+            CBUFFER_START(UnityPerMaterial)
+                float4 _BaseMap_ST;
+                half4 _BaseColor;
+                half _Cutoff;
+            CBUFFER_END
 
             struct Attributes
             {
