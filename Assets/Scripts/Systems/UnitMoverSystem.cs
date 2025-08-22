@@ -42,22 +42,31 @@ namespace Systems
             {
                 DeltaTime = SystemAPI.Time.DeltaTime
             };
-            state.Dependency = job.ScheduleParallel(state.Dependency);
-
-
+            state.Dependency = job.ScheduleParallel(state.Dependency); 
         }
 
     }
 }
 
-public partial struct UnitMoverJob : IJobEntity
+[BurstCompile]
+public partial struct UnitMoverJob : IJobEntity 
 {
     public float DeltaTime;
     public void Execute(ref LocalTransform localTransform, in UnitMoverData unitMoverData,
         ref PhysicsVelocity physicsVelocity)
     {
          var targetPosition = unitMoverData.TargetPosition; //(float3)MouseWorldPosition.Instance.GetPosition();
-        var moveDirection = targetPosition - localTransform.Position; 
+        var moveDirection = targetPosition - localTransform.Position;
+
+
+        if (math.lengthsq(moveDirection) < 2f)
+        {
+            physicsVelocity.Linear = float3.zero;
+            physicsVelocity.Angular = float3.zero;
+            return; 
+        }
+        
+        
         moveDirection = math.normalize(moveDirection);
 
         float rotationSpeed = unitMoverData.RotationSpeed;
