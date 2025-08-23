@@ -8,11 +8,24 @@ using UnityEngine.InputSystem;
 
 namespace MonoBehaviours
 {
-    public class UnitSelectionManager : UnityEngine.MonoBehaviour
+    public class UnitSelectionManager : MonoBehaviour
     {
+        private Vector2 _selectionStartPosition;
 
         private void Update()
         {
+
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                _selectionStartPosition = Mouse.current.position.ReadValue();
+                
+            }
+            if (Mouse.current.leftButton.wasReleasedThisFrame)
+            {
+                
+                var selectionEndPosition = Mouse.current.position.ReadValue();
+            }
+                
             if (Mouse.current.rightButton.wasPressedThisFrame)
             {
                 var mouseWorldPosition = MouseWorldPosition.Instance.GetPosition();
