@@ -18,9 +18,9 @@ namespace MonoBehaviours
                 var mouseWorldPosition = MouseWorldPosition.Instance.GetPosition();
 
                  EntityManager entityManager =  World.DefaultGameObjectInjectionWorld.EntityManager;
-                 EntityQuery entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<UnitMoverData>().Build(entityManager);
+                 EntityQuery entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<UnitMoverData,Selected>().Build(entityManager);
                  
-                 NativeArray<Entity> entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
+                 //NativeArray<Entity> entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
                  NativeArray<UnitMoverData> unitMoverArray = entityQuery.ToComponentDataArray<UnitMoverData>(Allocator.Temp);;
                  
                  for (int i = 0; i < unitMoverArray.Length; i++)
@@ -28,7 +28,6 @@ namespace MonoBehaviours
                      var unitMover = unitMoverArray[i];
                      unitMover.TargetPosition = mouseWorldPosition;
                      unitMoverArray[i] = unitMover;
-                     //entityManager.SetComponentData(entityArray[i], unitMover); 
                  }
                  entityQuery.CopyFromComponentDataArray(unitMoverArray);
             }

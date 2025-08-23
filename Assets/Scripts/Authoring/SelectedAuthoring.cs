@@ -11,12 +11,13 @@ namespace Authoring
             {
                 Entity entity = GetEntity(TransformUsageFlags.Dynamic);
                 AddComponent(entity, new Selected());
+                SetComponentEnabled<Selected>(entity,false);
             }
         }
     }
 }
 
-public struct Selected : IComponentData
+public struct Selected : IComponentData, IEnableableComponent
 {
     
 }
