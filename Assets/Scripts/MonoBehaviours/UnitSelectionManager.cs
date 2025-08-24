@@ -3,6 +3,7 @@ using Authoring;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,13 +27,37 @@ namespace MonoBehaviours
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 _selectionStartPosition = Mouse.current.position.ReadValue();
-                Rect selectionAreaRect = GetSelectionAreaRect();
                 OnSelectionAreaStart?.Invoke(this, EventArgs.Empty);
                 
             }
             if (Mouse.current.leftButton.wasReleasedThisFrame)
             { 
                 var selectionEndPosition = Mouse.current.position.ReadValue();
+
+                EntityManager entityManager =  World.DefaultGameObjectInjectionWorld.EntityManager;
+                EntityQuery entityQuery = new EntityQueryBuilder(Allocator.Temp).WithPresent<Selected>().Build(entityManager); 
+                NativeArray<Entity> entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
+
+                for (int i = 0; i < entityArray.Length; i++) {
+                    entityManager.SetComponentEnabled<Selected>(entityArray[i],false);
+                }
+                
+                entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<LocalTransform,Unit>().WithPresent<Selected>().Build(entityManager); 
+                entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
+                NativeArray<LocalTransform> localTransformArray = entityQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);; 
+                 
+                for (int i = 0; i < localTransformArray.Length; i++)
+                {
+                    var unitLocalTransform = localTransformArray[i];
+                    Vector2 unitScreenPosition = Camera.main.WorldToScreenPoint(unitLocalTransform.Position);
+                    Debug.Log($"I currently processing unit  {i}");
+                    if (GetSelectionAreaRect().Contains(unitScreenPosition))
+                    {
+                       entityManager.SetComponentEnabled<Selected>(entityArray[i], true);
+                       Debug.Log($"I currently activate unit at {unitLocalTransform.Position}");
+                       
+                    }
+                }
                 OnSelectionAreaEnd?.Invoke(this, EventArgs.Empty);
             }
                 
@@ -43,11 +68,13 @@ namespace MonoBehaviours
                  EntityManager entityManager =  World.DefaultGameObjectInjectionWorld.EntityManager;
                  EntityQuery entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<UnitMoverData,Selected>().Build(entityManager);
                  
-                 //NativeArray<Entity> entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
-                 NativeArray<UnitMoverData> unitMoverArray = entityQuery.ToComponentDataArray<UnitMoverData>(Allocator.Temp);;
+                 
+                 NativeArray<Entity> entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
+                 NativeArray<UnitMoverData> unitMoverArray = entityQuery.ToComponentDataArray<UnitMoverData>(Allocator.Temp);; 
                  
                  for (int i = 0; i < unitMoverArray.Length; i++)
                  {
+                     var unitLocalTransform = unitMoverArray[i];
                      var unitMover = unitMoverArray[i];
                      unitMover.TargetPosition = mouseWorldPosition;
                      unitMoverArray[i] = unitMover;
@@ -56,7 +83,7 @@ namespace MonoBehaviours
             }
         }
 
-        private Rect GetSelectionAreaRect()
+        public Rect GetSelectionAreaRect()
         {
             var mousePos = Mouse.current.position.ReadValue();
             var lowerLeftCorner = new Vector2(

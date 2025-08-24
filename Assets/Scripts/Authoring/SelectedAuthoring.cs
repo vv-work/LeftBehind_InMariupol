@@ -5,6 +5,7 @@ namespace Authoring
 {
     public class SelectedAuthoring : MonoBehaviour
     {
+        
         public GameObject VisualEntity;
         public float showScale = 1.5f;
         private class SelectedAuthoringBaker : Baker<SelectedAuthoring>
