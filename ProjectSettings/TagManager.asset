@@ -11,14 +11,14 @@ TagManager:
   - 
   - Water
   - UI
-  - Ground
   - Units
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Buildings
+  - PathfindingWalls
+  - PathfindingHeavy
+  - Minimap
+  - FogOfWar
+  - FogOfWarVisual
+  - Over
   - 
   - 
   - 
