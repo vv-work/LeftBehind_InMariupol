@@ -2,35 +2,34 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
+public class UnitMoverAuthoring : MonoBehaviour {
 
-namespace Authoring
-{
-    public class UnitMoverAuthoring : MonoBehaviour
-    {
-        [SerializeField]
-        private float _moveSpeed;
 
-        [SerializeField]
-        private float _rotationSpeed;
+    public float moveSpeed;
+    public float rotationSpeed;
 
-        private class MoveSpeedAuthoringBaker : Baker<UnitMoverAuthoring>
-        {
-            public override void Bake(UnitMoverAuthoring authoring)
-            {
-                Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-                var moveSpeedData = new UnitMoverData()
-                {
-                    MovementSpeed = authoring._moveSpeed,
-                    RotationSpeed = authoring._rotationSpeed
-                }; 
-                AddComponent(entity, moveSpeedData); 
-            }
+
+    public class Baker : Baker<UnitMoverAuthoring> {
+
+        public override void Bake(UnitMoverAuthoring authoring) {
+            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            AddComponent(entity, new UnitMover {
+                moveSpeed = authoring.moveSpeed,
+                rotationSpeed = authoring.rotationSpeed,
+            });
         }
+
     }
-    public struct UnitMoverData : IComponentData
-    {
-        public float MovementSpeed;
-        public float RotationSpeed;
-        public float3 TargetPosition;
-    }
+
+}
+
+public struct UnitMover : IComponentData {
+
+
+    public float moveSpeed;
+    public float rotationSpeed;
+    public float3 targetPosition;
+    public bool isMoving;
+
+
 }
