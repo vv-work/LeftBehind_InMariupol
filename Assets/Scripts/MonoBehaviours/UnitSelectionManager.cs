@@ -119,11 +119,13 @@ namespace MonoBehaviours
                  NativeArray<Entity> entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
                  NativeArray<UnitMoverData> unitMoverArray = entityQuery.ToComponentDataArray<UnitMoverData>(Allocator.Temp);; 
                  
+                 NativeArray<float3> movePositionArray = GenerateMovePositionArray(mouseWorldPosition, unitMoverArray.Length);
+                 
                  for (int i = 0; i < unitMoverArray.Length; i++)
                  {
                      var unitLocalTransform = unitMoverArray[i];
                      var unitMover = unitMoverArray[i];
-                     unitMover.TargetPosition = mouseWorldPosition;
+                     unitMover.TargetPosition = movePositionArray[i];
                      unitMoverArray[i] = unitMover;
                  }
                  entityQuery.CopyFromComponentDataArray(unitMoverArray);
@@ -144,18 +146,42 @@ namespace MonoBehaviours
             return new Rect(lowerLeftCorner, upperRightCorner - lowerLeftCorner); 
         }
 
-        private NativeArray<float3> GenerateMovePositionArray(float targetPosition, int positionCount)
-        {
-
+        private NativeArray<float3> GenerateMovePositionArray(float3 targetPosition, int positionCount)
+        { 
             NativeArray<float3> positionArray = new NativeArray<float3>(positionCount, Allocator.Temp);
             
             if (positionCount==0)
                 return positionArray;
             
             positionArray[0] = targetPosition; 
-            if (positionCount == 1)
-                return positionArray; 
             
+            if (positionCount == 1)
+                return positionArray;
+
+            float ringSize = 1.2f;
+            int ring = 0;
+            int positionIndex = 0;
+
+            while (positionIndex < positionCount)
+            {
+                int ringPositionCount = 3 + ring * 2;
+                for(int i = 0; i < ringPositionCount; i++)
+                {
+                    float angle = i * (math.PI2/ringPositionCount);
+                    float3 ringOffset = new float3(ringSize * (ring + 1),0,0);
+                    //todo:note math.rotate() and `quaternion.RotateY` 
+                    float3 ringVector = math.rotate(quaternion.RotateY(angle), ringOffset);
+                    
+                    float3 ringPosition = targetPosition + ringVector; 
+                    positionArray[positionIndex] = ringPosition;
+                    
+                    positionIndex++;
+                    if (positionIndex >= positionCount)
+                        break;
+                }
+
+                ring++;
+            }
             return positionArray;
         }
     }
