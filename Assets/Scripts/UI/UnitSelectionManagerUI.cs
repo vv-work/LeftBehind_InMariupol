@@ -7,6 +7,7 @@ namespace UI
     public class UnitSelectionManagerUI : MonoBehaviour
     { 
         [SerializeField] private RectTransform _selectionAreaRectTransform;
+        [SerializeField] private Canvas _mainCanvas;
         private bool _isSelecting;
 
         private void Start()
@@ -26,9 +27,10 @@ namespace UI
         {
             
             var selectionAreaRect = UnitSelectionManager.Instance.GetSelectionAreaRect();
+            float canvasScale = _mainCanvas.transform.localScale.x;
             
-            _selectionAreaRectTransform.anchoredPosition = selectionAreaRect.position;
-            _selectionAreaRectTransform.sizeDelta = selectionAreaRect.size;
+            _selectionAreaRectTransform.anchoredPosition = selectionAreaRect.position/canvasScale;
+            _selectionAreaRectTransform.sizeDelta = selectionAreaRect.size/canvasScale;
             
         }
         private void SelectionStarted(object sender, EventArgs e)
