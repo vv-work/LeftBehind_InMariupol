@@ -39,13 +39,16 @@ namespace MonoBehaviours
 
                 EntityManager entityManager =  World.DefaultGameObjectInjectionWorld.EntityManager;
                 EntityQuery entityQuery = new EntityQueryBuilder(Allocator.Temp).WithPresent<Selected>().Build(entityManager); 
+                
                 NativeArray<Entity> entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
+                NativeArray<Selected> selectedArray = entityQuery.ToComponentDataArray<Selected>(Allocator.Temp);;
 
                 //Deselecting Units
-                for (int i = 0; i < entityArray.Length; i++) 
-                    entityManager.SetComponentEnabled<Selected>(entityArray[i],false);
-                
-                
+                for (int i = 0; i < entityArray.Length; i++) {
+                    entityManager.SetComponentEnabled<Selected>(entityArray[i], false);
+                }
+
+
                 var selectionAreaRect = GetSelectionAreaRect();
                 float selectionAreaSize = selectionAreaRect.height + selectionAreaRect.width;
                 float multipleSelectionAreaSize = 50f;

@@ -28,5 +28,9 @@ public struct Selected : IComponentData, IEnableableComponent
 {
     public Entity visualEntity;
     public float showScale;
+    
+    public bool OnSelected;
+    public bool OnDeselected;
+
 
 }
