@@ -46,8 +46,12 @@ namespace MonoBehaviours
                 //Deselecting Units
                 for (int i = 0; i < entityArray.Length; i++) {
                     entityManager.SetComponentEnabled<Selected>(entityArray[i], false);
-                }
-
+                    Selected selected = selectedArray[i];
+                    selected.OnDeselected = true;
+                    selectedArray[i] = selected;
+                    entityManager.SetComponentEnabled<Selected>(entityArray[i], true);
+                } 
+                //entityQuery.CopyFromComponentDataArray(selectedArray);
 
                 var selectionAreaRect = GetSelectionAreaRect();
                 float selectionAreaSize = selectionAreaRect.height + selectionAreaRect.width;
