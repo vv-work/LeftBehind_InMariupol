@@ -33,10 +33,10 @@ namespace Systems
                 
                 var direction =  math.normalize(targetPosition- localTransform.ValueRO.Position); 
                 var moveOffset = direction * bullet.ValueRO.Speed * deltaTime;
-                var distanceBefore = math.distancesq(ourPosition + moveOffset, targetPosition);
+                var distanceBefore = math.distancesq(ourPosition, targetPosition);
                 
                 localTransform.ValueRW.Position += moveOffset; 
-                var distanceAfter = math.distancesq(localTransform.ValueRO.Position + moveOffset, targetPosition);
+                var distanceAfter = math.distancesq(localTransform.ValueRO.Position, targetPosition);
                 
                 if (distanceBefore < math.square(.002f) || distanceBefore < distanceAfter ) {
                     
