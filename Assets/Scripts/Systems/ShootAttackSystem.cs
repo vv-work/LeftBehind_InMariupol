@@ -30,7 +30,6 @@ namespace Systems
             {
                 if (target.ValueRO.TargetEntity == Entity.Null) continue;
 
-                Debug.Log($"Update");
                 shoot.ValueRW.Timer -= dt;
                 if (shoot.ValueRW.Timer > 0f) continue;
                 
@@ -45,11 +44,13 @@ namespace Systems
                 // BulletData
                 if (state.EntityManager.HasComponent<BulletData>(refs.BulletDataPrefabEntity))
                 {
-                    ecb.SetComponent(bullet, new BulletData { DamageAmount = shoot.ValueRO.Damage });
+                    var bulletData = state.EntityManager.GetComponentData<BulletData>(refs.BulletDataPrefabEntity);
+                    bulletData.DamageAmount = shoot.ValueRO.Damage;
+                    ecb.SetComponent(bullet, bulletData);
                 }
                 else
                 {
-                    ecb.AddComponent(bullet, new BulletData { DamageAmount = shoot.ValueRO.Damage });
+                    ecb.AddComponent(bullet, new BulletData { DamageAmount = shoot.ValueRO.Damage, Speed = 10f });
                 }
 
                 // TargetData

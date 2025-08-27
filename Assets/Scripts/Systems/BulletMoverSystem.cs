@@ -25,7 +25,6 @@ namespace Systems
             foreach ((var localTransform, var bullet,var target,var entity) 
                      in SystemAPI.Query<RefRW<LocalTransform>, RefRO<BulletData>,RefRO<TargetData>>().WithEntityAccess()) {
 
-                Debug.Log($"Update bullet position");
                 
                 
                 if (target.ValueRO.TargetEntity == Entity.Null)

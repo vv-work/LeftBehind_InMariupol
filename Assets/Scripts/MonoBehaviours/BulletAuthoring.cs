@@ -23,7 +23,7 @@ namespace MonoBehaviours
                         DamageAmount = authoring._damageAmount,
 
                 };
-                //AddComponent(entity,bullet);
+                AddComponent(entity,bullet);
                 
             }
         }
