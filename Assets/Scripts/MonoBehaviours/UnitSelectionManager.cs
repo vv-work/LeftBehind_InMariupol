@@ -92,27 +92,22 @@ namespace MonoBehaviours
 
         private static void PerformRaycastAndSelectUnit(EntityManager entityManager, Vector2 mousePosition)
         {
-            EntityQuery entityQuery;
-            //todo: Write notes about Physics
-            entityQuery =  entityManager.CreateEntityQuery(typeof(PhysicsWorldSingleton));
-            //todo: Note taking singleton 
+            var entityQuery =  entityManager.CreateEntityQuery(typeof(PhysicsWorldSingleton)); 
+            
             var physicsWorldSingleton = entityQuery.GetSingleton<PhysicsWorldSingleton>();
             var collisionWorld = physicsWorldSingleton.CollisionWorld; 
             var cameraRay = Camera.main.ScreenPointToRay(mousePosition);
 
-            int unitLayer = 7;
             RaycastInput raycastInput = new RaycastInput()
             {
-                //todo:note Geting point
                 Start = cameraRay.GetPoint(0f),
                 End = cameraRay.GetPoint(1000f), 
-                //todo: not Collision filter
+                //todo: not Collision filter 
                 Filter = new CollisionFilter()
                 {
-                    GroupIndex = 0,
                     BelongsTo = ~0u,
-                    // CollidesWith = (uint)_unitLayerMask.value, 
-                    CollidesWith = 1u<<unitLayer
+                    CollidesWith = GameAssets.UNITY_LAYER,
+                    GroupIndex = 0,
                 }
 
             };
