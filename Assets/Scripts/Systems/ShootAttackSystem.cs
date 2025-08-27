@@ -21,15 +21,21 @@ namespace Systems
                     continue;
                 shootAttack.ValueRW.Timer = shootAttack.ValueRO.TimerMax;
 
-                 MakeAttack(ref state,shootAttack,target);
-
+                 MakeAttack(ref state,shootAttack,target); 
             }
 
         } 
         
         private void MakeAttack(ref SystemState state, RefRW<ShootAttackData> shootAttack, RefRO<TargetData> target)
-        { 
-            Debug.Log($"Shoot! {target.ValueRO.TargetEntity}");
+        {
+            if (SystemAPI.HasComponent<HealthData>(target.ValueRO.TargetEntity))
+            {
+                var targetHealth = SystemAPI.GetComponentRW<HealthData>(target.ValueRO.TargetEntity);
+                targetHealth.ValueRW.Health -= shootAttack.ValueRO.Damage;
+
+
+            }
+            // Debug.Log($"Shoot! {target.ValueRO.TargetEntity}");
             //throw new System.NotImplementedException();
         }
     }

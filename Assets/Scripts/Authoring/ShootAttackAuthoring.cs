@@ -5,7 +5,10 @@ namespace Authoring
 {
     public class ShootAttackAuthoring : MonoBehaviour
     {
+        [SerializeField]
         private float _timerMax =0.2f;
+        [SerializeField]
+        private int _damage = 10;
 
         private class ShootAttackAuthoringBaker : Baker<ShootAttackAuthoring>
         {
@@ -14,6 +17,7 @@ namespace Authoring
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
                 var shootAttack = new ShootAttackData() {
                     TimerMax = authoring._timerMax,
+                    Damage = authoring._damage,
                 };
                 AddComponent(entity,shootAttack);
             }
@@ -21,6 +25,7 @@ namespace Authoring
     }
     public struct ShootAttackData : IComponentData
     {
+        public int Damage;
         public float TimerMax;
         public float Timer;
     }
