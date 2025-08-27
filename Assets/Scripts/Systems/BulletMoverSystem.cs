@@ -25,11 +25,13 @@ namespace Systems
             foreach ((var localTransform, var bullet,var target,var entity) 
                      in SystemAPI.Query<RefRW<LocalTransform>, RefRO<BulletData>,RefRO<TargetData>>().WithEntityAccess()) {
 
-                
-                
-                if (target.ValueRO.TargetEntity == Entity.Null)
+                if (target.ValueRO.TargetEntity == Entity.Null || 
+                    !SystemAPI.HasComponent<LocalTransform>(target.ValueRO.TargetEntity))
+                { 
+                    ecb.DestroyEntity(entity);
                     continue;
-                
+                }
+
                 var  targetPosition = SystemAPI.GetComponent<LocalTransform>(target.ValueRO.TargetEntity).Position;
                 var ourPosition = localTransform.ValueRW.Position;
                 
@@ -45,7 +47,7 @@ namespace Systems
                     if (SystemAPI.HasComponent<HealthData>(target.ValueRO.TargetEntity))
                     { 
                         var health = SystemAPI.GetComponentRW<HealthData>(target.ValueRO.TargetEntity);
-                        health.ValueRW.Health += bullet.ValueRO.DamageAmount; 
+                        health.ValueRW.Health -= bullet.ValueRO.DamageAmount; 
                     }
                     ecb.DestroyEntity(entity);
                     
