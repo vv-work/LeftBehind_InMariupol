@@ -1,3 +1,4 @@
+using System;
 using Authoring;
 using MonoBehaviours;
 using Unity.Burst;
@@ -32,7 +33,13 @@ namespace Systems
                     continue;
                 }
 
-                var  targetPosition = SystemAPI.GetComponent<LocalTransform>(target.ValueRO.TargetEntity).Position;
+                if (!SystemAPI.HasComponent<ShootVictim>(target.ValueRO.TargetEntity))
+                    throw new NullReferenceException("ShootVictim not found on entity: " + entity + "");
+                
+                var  targetPosition = SystemAPI.GetComponent<LocalTransform>(target.ValueRO.TargetEntity)
+                    .TransformPoint(SystemAPI.GetComponent<ShootVictim>(target.ValueRO.TargetEntity).TargetPoint);
+                    
+                    
                 var ourPosition = localTransform.ValueRW.Position;
                 
                 var direction =  math.normalize(targetPosition- localTransform.ValueRO.Position); 

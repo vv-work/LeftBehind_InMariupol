@@ -2,6 +2,7 @@ using Authoring;
 using MonoBehaviours;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -25,44 +26,65 @@ namespace Systems
             var refs = SystemAPI.GetSingleton<EntitiesReferencesData>();
             float dt = SystemAPI.Time.DeltaTime;
 
-            foreach (var (lt, shoot, target) in
-                     SystemAPI.Query<RefRO<LocalTransform>, RefRW<ShootAttackData>, RefRO<TargetData>>())
+            foreach (var (localTransform, shootAttack, target,unitMover) in
+                     SystemAPI.Query<RefRW<LocalTransform>, RefRW<ShootAttackData>, RefRO<TargetData>,RefRW<UnitMoverData>>())
             {
-                if (target.ValueRO.TargetEntity == Entity.Null) continue;
-
-                shoot.ValueRW.Timer -= dt;
-                if (shoot.ValueRW.Timer > 0f) continue;
+                if (target.ValueRO.TargetEntity == Entity.Null||!SystemAPI.HasComponent<LocalTransform>(target.ValueRO.TargetEntity))
+                    continue;
                 
-                shoot.ValueRW.Timer = shoot.ValueRW.TimerMax;
+                var targetLocalTransform = SystemAPI.GetComponent<LocalTransform>(target.ValueRO.TargetEntity);
+                
+                var distanceSq = math.distancesq(localTransform.ValueRO.Position, targetLocalTransform.Position);
+
+                if (distanceSq > math.square(shootAttack.ValueRO.AttackDistance))
+                {
+                    unitMover.ValueRW.TargetPosition = targetLocalTransform.Position;
+                    continue; 
+                } 
+                unitMover.ValueRW.TargetPosition = localTransform.ValueRO.Position; 
+                
+                float3 aimDirection = targetLocalTransform.Position - localTransform.ValueRO.Position;
+                aimDirection = math.normalize(aimDirection);
+                
+                var targetRotation = quaternion.LookRotation(aimDirection, math.up());
+                float step = SystemAPI.Time.DeltaTime * unitMover.ValueRO.RotationSpeed;
+                var rotSlerp = math.slerp(localTransform.ValueRO.Rotation, targetRotation, step);
+                
+                localTransform.ValueRW.Rotation = rotSlerp;
+
+                shootAttack.ValueRW.Timer -= dt;
+                if (shootAttack.ValueRW.Timer > 0f) 
+                    continue; 
+                
+                shootAttack.ValueRW.Timer = shootAttack.ValueRW.TimerMax;
+
+                
+                    
+                
 
                 // Spawn via ECB (deferred)
                 var bullet = ecb.Instantiate(refs.BulletDataPrefabEntity);
 
                 // Initialize entirely via ECB
-                ecb.SetComponent(bullet, LocalTransform.FromPosition(lt.ValueRO.Position));
+                float3 bulletSpawnPosition = localTransform.ValueRO.TransformPoint(shootAttack.ValueRO.BulletSpawnLocalPosition);
+                ecb.SetComponent(bullet, LocalTransform.FromPosition(bulletSpawnPosition));
 
                 // BulletData
                 if (state.EntityManager.HasComponent<BulletData>(refs.BulletDataPrefabEntity))
                 {
                     var bulletData = state.EntityManager.GetComponentData<BulletData>(refs.BulletDataPrefabEntity);
-                    bulletData.DamageAmount = shoot.ValueRO.Damage;
+                    bulletData.DamageAmount = shootAttack.ValueRO.Damage;
                     ecb.SetComponent(bullet, bulletData);
                 }
                 else
-                {
-                    ecb.AddComponent(bullet, new BulletData { DamageAmount = shoot.ValueRO.Damage, Speed = 10f });
-                }
+                    ecb.AddComponent(bullet, new BulletData { DamageAmount = shootAttack.ValueRO.Damage, Speed = 10f });
 
                 // TargetData
                 var tgt = new TargetData { TargetEntity = target.ValueRO.TargetEntity };
                 if (state.EntityManager.HasComponent<TargetData>(refs.BulletDataPrefabEntity))
-                {
                     ecb.SetComponent(bullet, tgt);
-                }
                 else
-                {
                     ecb.AddComponent(bullet, tgt);
-                }
             }
         }
     }

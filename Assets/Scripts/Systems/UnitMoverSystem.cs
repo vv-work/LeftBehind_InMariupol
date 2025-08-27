@@ -64,7 +64,6 @@ public partial struct UnitMoverJob : IJobEntity
         {
             physicsVelocity.Linear = float3.zero;
             physicsVelocity.Angular = float3.zero;
-            localTransform.Rotation = quaternion.identity;
             return; 
         }
         
@@ -80,7 +79,6 @@ public partial struct UnitMoverJob : IJobEntity
 
         physicsVelocity.Angular = float3.zero;
         physicsVelocity.Linear = moveDirection * DeltaTime* unitMoverData.MovementSpeed;
-        localTransform.Rotation = quaternion.identity;
         localTransform.Position = new float3(localTransform.Position.x,0.1f,localTransform.Position.z);
     }
 }
