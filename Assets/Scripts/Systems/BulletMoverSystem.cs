@@ -38,7 +38,7 @@ namespace Systems
                 localTransform.ValueRW.Position += moveOffset; 
                 var distanceAfter = math.distancesq(localTransform.ValueRO.Position, targetPosition);
                 
-                if (distanceBefore < math.square(.002f) || distanceBefore < distanceAfter ) {
+                if (distanceBefore < 2*math.lengthsq(moveOffset) || distanceBefore < distanceAfter ) { 
                     
                     if (SystemAPI.HasComponent<HealthData>(target.ValueRO.TargetEntity))
                     { 
