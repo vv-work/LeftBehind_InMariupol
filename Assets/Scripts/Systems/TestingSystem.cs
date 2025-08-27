@@ -14,16 +14,12 @@ namespace Systems
         public void OnUpdate(ref SystemState state)
         {
 
-            // int unitCount = 0;
-            // foreach (var (localTransform,
-            //              unitMoverData,
-            //              physicsVelocity) in
-            //          SystemAPI.Query< RefRW<LocalTransform>, RefRO<UnitMoverData>, RefRW<PhysicsVelocity>>()
-            //              .WithDisabled<Selected>())
-            // {
-            //     unitCount++;
-            // }
-            // Debug.Log($"Unity Count {unitCount}");
+            int unitCount = 0;
+            foreach (var firendly in
+                     SystemAPI.Query<RefRO<FriendlyData>>()) {
+                unitCount++;
+            }
+            Debug.Log($"Unit Count {unitCount}");
 
         }
     }
