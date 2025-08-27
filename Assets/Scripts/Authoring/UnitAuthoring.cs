@@ -14,7 +14,7 @@ namespace Authoring
             public override void Bake(UnitAuthoring authoring)
             {
                 Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-                var unit = new Unit()
+                var unit = new UnitData()
                 {
                     Faction = authoring._unitFaction,
                 };
@@ -23,7 +23,7 @@ namespace Authoring
         }
     }
 
-    public struct Unit : IComponentData
+    public struct UnitData : IComponentData
     {
         public Faction Faction;
     }

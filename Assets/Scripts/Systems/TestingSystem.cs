@@ -18,9 +18,7 @@ namespace Systems
             foreach (var firendly in
                      SystemAPI.Query<RefRO<FriendlyData>>()) {
                 unitCount++;
-            }
-            Debug.Log($"Unit Count {unitCount}");
-
+            } 
         }
     }
 }

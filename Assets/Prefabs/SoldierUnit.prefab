@@ -178,6 +178,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4054471358831069251, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
       insertIndex: -1
       addedObject: {fileID: -8242929268783776965}
+    - targetCorrespondingSourceObject: {fileID: 4054471358831069251, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -8262176613710654723}
+    - targetCorrespondingSourceObject: {fileID: 4054471358831069251, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -526938789564775840}
   m_SourcePrefab: {fileID: 100100000, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
 --- !u!4 &476131411429645005 stripped
 Transform:
@@ -215,3 +221,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585d24d1b2d34d288368a9652957df20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Authoring.FriendlyAuthoring
+--- !u!114 &-8262176613710654723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1436827096778406066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec6f9fb655b946649c7a171fb0eaeca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Authoring.FindTargetAuthoring
+  _range: 7
+  _targetFaction: 1
+  _timerMax: 0.2
+--- !u!114 &-526938789564775840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1436827096778406066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c36af820966340cf84b61258e8655fc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Authoring.ShootAttackAuthoring

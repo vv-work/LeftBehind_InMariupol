@@ -114,7 +114,7 @@ namespace MonoBehaviours
 
             if (collisionWorld.CastRay(raycastInput, out Unity.Physics.RaycastHit hit)) {
                 //todo: note .HasComponent<T>
-                if (entityManager.HasComponent<Unit>(hit.Entity))
+                if (entityManager.HasComponent<UnitData>(hit.Entity)&& entityManager.HasComponent<Selected>(hit.Entity))
                 { 
                     entityManager.SetComponentEnabled<Selected>(hit.Entity,true);
                     Selected selected = entityManager.GetComponentData<Selected>(hit.Entity);
@@ -129,7 +129,7 @@ namespace MonoBehaviours
             EntityQuery entityQuery;
             NativeArray<Entity> entityArray;
             //Selecting multiple logic
-            entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<LocalTransform,Unit>().WithPresent<Selected>().Build(entityManager); 
+            entityQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<LocalTransform,UnitData>().WithPresent<Selected>().Build(entityManager); 
             entityArray = entityQuery.ToEntityArray(Allocator.Temp);;
             NativeArray<LocalTransform> localTransformArray = entityQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);; 
                  

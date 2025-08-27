@@ -15,15 +15,15 @@ namespace Systems
         {
             foreach ((var selected,var entity) in SystemAPI.Query<RefRO<Selected>>().WithPresent<Selected>().WithEntityAccess())
             { 
+                if (selected.ValueRO.OnDeselected) { 
+                    var visualLocalTransform = SystemAPI.GetComponentRW<LocalTransform>(selected.ValueRO.visualEntity);
+                    visualLocalTransform.ValueRW.Scale = 0f;
+                } 
                  if (selected.ValueRO.OnSelected) { 
                      var visualLocalTransform = SystemAPI.GetComponentRW<LocalTransform>(selected.ValueRO.visualEntity);
                      visualLocalTransform.ValueRW.Scale = selected.ValueRO.showScale;
                  }
 
-                 if (selected.ValueRO.OnDeselected) { 
-                     var visualLocalTransform = SystemAPI.GetComponentRW<LocalTransform>(selected.ValueRO.visualEntity);
-                     visualLocalTransform.ValueRW.Scale = 0f;
-                 } 
             }
         } 
     }

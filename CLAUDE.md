@@ -4,85 +4,99 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Unity 3D game project titled "Left Behind In Mariupol" - likely a narrative-driven game set in the Ukrainian city of Mariupol. The project uses Unity 6000.2.0f1 with Universal Render Pipeline (URP) for cross-platform rendering.
+"Left Behind In Mariupol" is a Unity DOTS (Data-Oriented Technology Stack) RTS game about Ukrainian defenders during the battle for Mariupol. The project uses Unity ECS (Entity Component System) for high-performance simulation of hundreds of units.
 
-## Unity Project Architecture
+## Core Architecture
 
-### Core Technologies
+### Unity DOTS/ECS Implementation
 - **Unity Version**: 6000.2.0f1 (Unity 6 LTS)
+- **ECS Version**: Unity Entities 1.3.14
+- **Physics**: Unity Physics 1.3.14 for DOTS-based physics simulation
+- **Graphics**: Unity Entities Graphics 1.4.12 for efficient rendering
 - **Render Pipeline**: Universal Render Pipeline (URP) 17.2.0
-- **Input System**: Unity Input System 1.14.1 with custom InputActions
-- **Navigation**: AI Navigation 2.0.8 for pathfinding and AI movement
-- **Visual Scripting**: Unity Visual Scripting 1.9.7 enabled
 
-### Project Structure
-- **Assets/Scenes/**: Contains game scenes (currently SampleScene.unity)
-- **Assets/Settings/**: URP configuration files, rendering profiles for PC and Mobile
-- **Assets/InputSystem_Actions.inputactions**: Comprehensive input mapping for Player and UI actions
-- **ProjectSettings/**: Unity project configuration files
-- **Packages/**: Unity Package Manager dependencies
+### ECS Architecture Pattern
+The project follows strict ECS architecture:
 
-### Input System Configuration
-The project uses a sophisticated input system with two main action maps:
-- **Player Actions**: Move, Look, Attack, Interact (with Hold interaction), Crouch, Jump, Sprint, Previous/Next navigation
-- **UI Actions**: Standard UI navigation, pointer interactions, scroll wheel support
+**Components (Data)**:
+- `Unit`: Holds faction data for units
+- `FindTargetData`: Range-based target acquisition
+- `UnitMoverData`: Movement parameters and target positions
+- `Selected`: Unit selection state with event flags
 
-Input supports multiple control schemes:
-- Keyboard & Mouse
-- Gamepad (Xbox/PlayStation controllers)
-- Touch (mobile devices)
-- XR Controllers
-- Generic Joystick
+**Systems (Logic)**:
+- `FindTargetSystem`: Handles target acquisition using Unity Physics CollisionWorld
+- `UnitMoverSystem`: Manages unit movement with Burst-compiled parallel jobs
+- `SelectVisualSystem`: Updates visual feedback for selected units
+- `ResetEventsSystem`: Resets event flags each frame
 
-### Rendering Setup
-The project is configured for both PC and mobile platforms with separate URP assets:
-- **PC**: Higher quality rendering settings
-- **Mobile**: Optimized for mobile performance
-- Volume profiles for post-processing effects
+**Authoring Components**:
+- `UnitAuthoring`, `FindTargetAuthoring`, `UnitMoverAuthoring`: Convert GameObject data to ECS components during baking process
+
+### Hybrid Architecture
+The project uses a hybrid approach combining ECS and traditional MonoBehaviours:
+- **ECS**: Core gameplay systems, unit simulation, movement, and combat
+- **MonoBehaviours**: UI management, input handling, and Unity Editor integration
+- **Baking System**: Converts authored GameObjects to ECS entities at build time
 
 ## Development Workflow
 
-### Building the Project
-Unity projects are built through the Unity Editor interface:
-1. Open the project in Unity Editor 6000.2.0f1
-2. Use File → Build Settings to configure target platform
-3. Select scenes to include (currently only SampleScene)
-4. Build via Build or Build and Run
+### Building and Running
+- **Open Project**: Use Unity Hub to open with Unity 6000.2.0f1
+- **Play Mode**: Press Play in Unity Editor (F5) - ECS systems will automatically start
+- **Build**: File → Build Settings → Build (uses MainScene.unity)
 
-### Code Development
-- The project currently has no custom C# scripts in the Assets folder
-- C# scripts would be compiled automatically by Unity
-- Use the generated .sln file to work with Visual Studio or Rider
+### Code Organization
+```
+Assets/Scripts/
+├── Authoring/          # ECS authoring components for GameObjects
+├── Systems/            # ECS systems (game logic)
+├── MonoBehaviours/     # Traditional Unity components
+└── UI/                 # UI-specific components
+```
 
-### Common Unity Commands
-- **Open Project**: Launch Unity Hub and open the project folder
-- **Play Mode**: Use Unity Editor's play button to test gameplay
-- **Build**: File → Build Settings → Build (or Ctrl+Shift+B)
-- **Package Manager**: Window → Package Manager to manage dependencies
+### Testing ECS Systems
+- Use Unity's ECS debugging tools: Window → Entities → Systems/Hierarchy
+- Systems can be toggled on/off in the Editor for testing
+- Burst Inspector: Jobs → Burst → Open Inspector for performance analysis
 
-### Testing
-Unity projects use Unity Test Framework:
-- **Play Mode Tests**: Runtime testing of game logic
-- **Edit Mode Tests**: Editor-time testing of utilities and systems
-- Access via Window → General → Test Runner
+## Key ECS Concepts
 
-## Key Dependencies
-The project includes these essential Unity packages:
-- `com.unity.render-pipelines.universal`: URP rendering system
+### Entity Queries and Jobs
+- Systems use `SystemAPI.Query<>()` for component access
+- Parallel jobs (`IJobEntity`) are Burst-compiled for performance
+- `EntityQueryBuilder` constructs filtered entity sets
+
+### Selection System Implementation
+The unit selection system demonstrates complex ECS/MonoBehaviour interaction:
+- Mouse input handled in `UnitSelectionManager` (MonoBehaviour)
+- Entity queries find and modify `Selected` components
+- Physics raycasting uses Unity Physics CollisionWorld
+- Supports both single-click and drag-rectangle selection
+
+### Movement System Architecture
+- Uses `IJobEntity` for parallel processing of unit movement
+- Integrates with Unity Physics for collision-aware movement
+- Formation generation for group movement orders
+- Burst-compiled for optimal performance
+
+## Physics Integration
+
+### Unity Physics Setup
+- CollisionWorld provides spatial queries for target finding
+- PhysicsVelocity components drive unit movement
+- Layer-based collision filtering (units on layer 7)
+- Raycasting for mouse-based unit selection
+
+## Critical Dependencies
+- `com.unity.entities`: Core ECS framework
+- `com.unity.physics`: DOTS physics simulation
+- `com.unity.entities.graphics`: ECS rendering
+- `com.unity.burst`: High-performance compilation
 - `com.unity.inputsystem`: Modern input handling
-- `com.unity.ai.navigation`: NavMesh and AI pathfinding
-- `com.unity.timeline`: Cutscene and animation sequencing
-- `com.unity.visualscripting`: Node-based scripting system
-- `com.unity.textmeshpro`: Advanced text rendering
 
-## Development Notes
-- This appears to be a narrative game project about Mariupol, likely dealing with serious historical/political themes
-- The comprehensive input system suggests the game will support multiple platforms and input methods
-- URP setup indicates the project is designed for modern graphics capabilities while maintaining mobile compatibility
-- The project is in early stages with minimal custom content beyond Unity template setup
-
-## Platform Targeting
-The URP configuration suggests multi-platform development:
-- PC/Console: Full feature set with higher quality rendering
-- Mobile: Optimized rendering pipeline for performance
-- Cross-platform input system ready for all supported Unity platforms
+## Performance Considerations
+- All core systems are Burst-compiled
+- Entity queries are cached and reused
+- Parallel job scheduling with dependency management
+- Physics queries use temporary NativeArrays for memory efficiency
