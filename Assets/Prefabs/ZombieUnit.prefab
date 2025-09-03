@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3255905061289962044, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 3255905061289962044, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
       propertyPath: m_LocalRotation.w
@@ -74,6 +74,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4054471358831069251, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
       insertIndex: -1
       addedObject: {fileID: -772686839605535228}
+    - targetCorrespondingSourceObject: {fileID: 4054471358831069251, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3935080716710947557}
   m_SourcePrefab: {fileID: 100100000, guid: b3ca6198351154d51b64ed93c0590454, type: 3}
 --- !u!1 &7394024313505718699 stripped
 GameObject:
@@ -106,3 +109,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Authoring.FindTargetAuthoring
   _range: 5
   _targetFaction: 0
+  _timerMax: 0.2
+--- !u!114 &3935080716710947557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7394024313505718699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1553fb4be8764d17ba9ea38e6d753930, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: LeftBehindInMariupol::Authoring.RandomWalkingAuthoring
+  originPosition:
+    x: 0
+    y: 0
+    z: 0
+  targetPosition:
+    x: 0
+    y: 0
+    z: 0
+  distanceMin: 3
+  distanceMax: 10
+  Seed: 56

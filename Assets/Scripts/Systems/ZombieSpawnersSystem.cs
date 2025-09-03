@@ -3,6 +3,7 @@ using MonoBehaviours;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
+using UnityEngine;
 
 namespace Systems
 {
@@ -17,22 +18,32 @@ namespace Systems
         [BurstCompile]
         public void OnUpdate(ref SystemState state) {
             
-            // var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
-                // .CreateCommandBuffer(state.WorldUnmanaged);
-                var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-
-            var refs = SystemAPI.GetSingleton<EntitiesReferencesData>();
-            float dt = SystemAPI.Time.DeltaTime;
+            var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged); 
+            var refs = SystemAPI.GetSingleton<EntitiesReferencesData>(); 
             
             foreach ((var spawner,var localTransform) in SystemAPI.Query<RefRW<ZombieSpawnerData>,RefRO<LocalTransform>>()) {
                 
-                if (spawner.ValueRO.Timer > 0f) {
+                 if (spawner.ValueRO.Timer > 0f) {
                     spawner.ValueRW.Timer -= SystemAPI.Time.DeltaTime;
                     continue; 
-                } 
-                spawner.ValueRW.Timer = spawner.ValueRO.TimerMax;
-                var zombie = ecb.Instantiate(refs.ZombieEntity);
-                ecb.SetComponent(zombie,LocalTransform.FromPosition(localTransform.ValueRO.Position)); 
+                 } 
+                 spawner.ValueRW.Timer = spawner.ValueRO.TimerMax;
+                 var random = spawner.ValueRO.Random;
+                 var seed = random.NextUInt();
+                 
+                 var zombieEntity = ecb.Instantiate(refs.ZombieEntity);
+                 
+                 ecb.AddComponent(zombieEntity,new RandomWalkingData()
+                 {
+                     OriginPosition = localTransform.ValueRO.Position,
+                     TargetPosition = localTransform.ValueRO.Position, 
+                     DistanceMin =  spawner.ValueRO.RandomWalkingDistanceMin,
+                     DistanceMax =  spawner.ValueRO.RandomWalkingDistanceMax, 
+                     Random = new Unity.Mathematics.Random(seed), 
+                 });
+                 ecb.SetComponent(zombieEntity,LocalTransform.FromPosition(localTransform.ValueRO.Position)); 
+                 spawner.ValueRW.Random = random;
+                
             }
 
         }

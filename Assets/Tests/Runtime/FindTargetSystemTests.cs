@@ -3,6 +3,7 @@ using Authoring;
 using MonoBehaviours;
 using NUnit.Framework;
 using Systems;
+using Tests.Runtime;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -14,7 +15,7 @@ using UnityEngine.TestTools;
 namespace Tests
 {
     [TestFixture]
-    public class FindTargetSystemTests : ECSTestsFixture
+    public class FindTargetSystemTests : EcsTestsFixture
     {
         private Entity sourceEntity;
         private Entity targetEntity;
@@ -29,27 +30,27 @@ namespace Tests
         public void FindTargetSystem_FindsCorrectTargetInRange()
         {
             // Arrange
-            sourceEntity = m_Manager.CreateEntity(
+            sourceEntity = MManager.CreateEntity(
                 typeof(LocalTransform),
                 typeof(FindTargetData),
                 typeof(TargetData)
             );
 
-            targetEntity = m_Manager.CreateEntity(
+            targetEntity = MManager.CreateEntity(
                 typeof(LocalTransform),
                 typeof(UnitData),
                 typeof(PhysicsCollider)
             );
 
             // Set up source entity
-            m_Manager.SetComponentData(sourceEntity, new LocalTransform
+            MManager.SetComponentData(sourceEntity, new LocalTransform
             {
                 Position = new float3(0, 0, 0),
                 Rotation = quaternion.identity,
                 Scale = 1
             });
 
-            m_Manager.SetComponentData(sourceEntity, new FindTargetData
+            MManager.SetComponentData(sourceEntity, new FindTargetData
             {
                 Range = 10f,
                 TargetFaction = Faction.Friendly,
@@ -57,20 +58,20 @@ namespace Tests
                 TimerMax = 0.2f
             });
 
-            m_Manager.SetComponentData(sourceEntity, new TargetData
+            MManager.SetComponentData(sourceEntity, new TargetData
             {
                 TargetEntity = Entity.Null
             });
 
             // Set up target entity
-            m_Manager.SetComponentData(targetEntity, new LocalTransform
+            MManager.SetComponentData(targetEntity, new LocalTransform
             {
                 Position = new float3(5, 0, 0), // Within range
                 Rotation = quaternion.identity,
                 Scale = 1
             });
 
-            m_Manager.SetComponentData(targetEntity, new UnitData
+            MManager.SetComponentData(targetEntity, new UnitData
             {
                 Faction = Faction.Friendly
             });
@@ -83,14 +84,14 @@ namespace Tests
                 Size = new float3(1, 1, 1)
             });
             
-            m_Manager.SetComponentData(targetEntity, new PhysicsCollider { Value = boxCollider });
+            MManager.SetComponentData(targetEntity, new PhysicsCollider { Value = boxCollider });
 
             // Act
             var systemHandle = World.GetExistingSystem<FindTargetSystem>();
             systemHandle.Update(World.Unmanaged);
 
             // Assert
-            var targetData = m_Manager.GetComponentData<TargetData>(sourceEntity);
+            var targetData = MManager.GetComponentData<TargetData>(sourceEntity);
             Assert.AreEqual(targetEntity, targetData.TargetEntity, "Target should be found and assigned");
         }
 
@@ -98,27 +99,27 @@ namespace Tests
         public void FindTargetSystem_DoesNotFindTargetOutOfRange()
         {
             // Arrange
-            sourceEntity = m_Manager.CreateEntity(
+            sourceEntity = MManager.CreateEntity(
                 typeof(LocalTransform),
                 typeof(FindTargetData),
                 typeof(TargetData)
             );
 
-            targetEntity = m_Manager.CreateEntity(
+            targetEntity = MManager.CreateEntity(
                 typeof(LocalTransform),
                 typeof(UnitData),
                 typeof(PhysicsCollider)
             );
 
             // Set up source entity
-            m_Manager.SetComponentData(sourceEntity, new LocalTransform
+            MManager.SetComponentData(sourceEntity, new LocalTransform
             {
                 Position = new float3(0, 0, 0),
                 Rotation = quaternion.identity,
                 Scale = 1
             });
 
-            m_Manager.SetComponentData(sourceEntity, new FindTargetData
+            MManager.SetComponentData(sourceEntity, new FindTargetData
             {
                 Range = 5f,
                 TargetFaction = Faction.Friendly,
@@ -126,20 +127,20 @@ namespace Tests
                 TimerMax = 0.2f
             });
 
-            m_Manager.SetComponentData(sourceEntity, new TargetData
+            MManager.SetComponentData(sourceEntity, new TargetData
             {
                 TargetEntity = Entity.Null
             });
 
             // Set up target entity (out of range)
-            m_Manager.SetComponentData(targetEntity, new LocalTransform
+            MManager.SetComponentData(targetEntity, new LocalTransform
             {
                 Position = new float3(20, 0, 0), // Out of range
                 Rotation = quaternion.identity,
                 Scale = 1
             });
 
-            m_Manager.SetComponentData(targetEntity, new UnitData
+            MManager.SetComponentData(targetEntity, new UnitData
             {
                 Faction = Faction.Friendly
             });
@@ -151,14 +152,14 @@ namespace Tests
                 Size = new float3(1, 1, 1)
             });
             
-            m_Manager.SetComponentData(targetEntity, new PhysicsCollider { Value = boxCollider });
+            MManager.SetComponentData(targetEntity, new PhysicsCollider { Value = boxCollider });
 
             // Act
             var systemHandle = World.GetExistingSystem<FindTargetSystem>();
             systemHandle.Update(World.Unmanaged);
 
             // Assert
-            var targetData = m_Manager.GetComponentData<TargetData>(sourceEntity);
+            var targetData = MManager.GetComponentData<TargetData>(sourceEntity);
             Assert.AreEqual(Entity.Null, targetData.TargetEntity, "Target should not be found when out of range");
         }
 
@@ -166,27 +167,27 @@ namespace Tests
         public void FindTargetSystem_DoesNotFindWrongFaction()
         {
             // Arrange
-            sourceEntity = m_Manager.CreateEntity(
+            sourceEntity = MManager.CreateEntity(
                 typeof(LocalTransform),
                 typeof(FindTargetData),
                 typeof(TargetData)
             );
 
-            targetEntity = m_Manager.CreateEntity(
+            targetEntity = MManager.CreateEntity(
                 typeof(LocalTransform),
                 typeof(UnitData),
                 typeof(PhysicsCollider)
             );
 
             // Set up source entity looking for Enemy faction
-            m_Manager.SetComponentData(sourceEntity, new LocalTransform
+            MManager.SetComponentData(sourceEntity, new LocalTransform
             {
                 Position = new float3(0, 0, 0),
                 Rotation = quaternion.identity,
                 Scale = 1
             });
 
-            m_Manager.SetComponentData(sourceEntity, new FindTargetData
+            MManager.SetComponentData(sourceEntity, new FindTargetData
             {
                 Range = 10f,
                 TargetFaction = Faction.Zombies, // Looking for Zombies
@@ -194,20 +195,20 @@ namespace Tests
                 TimerMax = 0.2f
             });
 
-            m_Manager.SetComponentData(sourceEntity, new TargetData
+            MManager.SetComponentData(sourceEntity, new TargetData
             {
                 TargetEntity = Entity.Null
             });
 
             // Set up target entity as Friendly faction
-            m_Manager.SetComponentData(targetEntity, new LocalTransform
+            MManager.SetComponentData(targetEntity, new LocalTransform
             {
                 Position = new float3(5, 0, 0),
                 Rotation = quaternion.identity,
                 Scale = 1
             });
 
-            m_Manager.SetComponentData(targetEntity, new UnitData
+            MManager.SetComponentData(targetEntity, new UnitData
             {
                 Faction = Faction.Friendly // But target is Friendly
             });
@@ -219,14 +220,14 @@ namespace Tests
                 Size = new float3(1, 1, 1)
             });
             
-            m_Manager.SetComponentData(targetEntity, new PhysicsCollider { Value = boxCollider });
+            MManager.SetComponentData(targetEntity, new PhysicsCollider { Value = boxCollider });
 
             // Act
             var systemHandle = World.GetExistingSystem<FindTargetSystem>();
             systemHandle.Update(World.Unmanaged);
 
             // Assert
-            var targetData = m_Manager.GetComponentData<TargetData>(sourceEntity);
+            var targetData = MManager.GetComponentData<TargetData>(sourceEntity);
             Assert.AreEqual(Entity.Null, targetData.TargetEntity, "Target should not be found when faction doesn't match");
         }
 
@@ -234,14 +235,14 @@ namespace Tests
         public void FindTargetSystem_RespectsCooldownTimer()
         {
             // Arrange
-            sourceEntity = m_Manager.CreateEntity(
+            sourceEntity = MManager.CreateEntity(
                 typeof(LocalTransform),
                 typeof(FindTargetData),
                 typeof(TargetData)
             );
 
             // Set up source entity with active timer
-            m_Manager.SetComponentData(sourceEntity, new FindTargetData
+            MManager.SetComponentData(sourceEntity, new FindTargetData
             {
                 Range = 10f,
                 TargetFaction = Faction.Friendly,
@@ -250,17 +251,17 @@ namespace Tests
             });
 
             var initialTargetData = new TargetData { TargetEntity = Entity.Null };
-            m_Manager.SetComponentData(sourceEntity, initialTargetData);
+            MManager.SetComponentData(sourceEntity, initialTargetData);
 
             // Act
             var systemHandle = World.GetExistingSystem<FindTargetSystem>();
             systemHandle.Update(World.Unmanaged);
 
             // Assert
-            var findTargetData = m_Manager.GetComponentData<FindTargetData>(sourceEntity);
+            var findTargetData = MManager.GetComponentData<FindTargetData>(sourceEntity);
             Assert.Less(findTargetData.Timer, 0.1f, "Timer should decrease");
             
-            var targetData = m_Manager.GetComponentData<TargetData>(sourceEntity);
+            var targetData = MManager.GetComponentData<TargetData>(sourceEntity);
             Assert.AreEqual(Entity.Null, targetData.TargetEntity, "Should not search for target while timer is active");
         }
     }

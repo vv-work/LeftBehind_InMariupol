@@ -7,6 +7,10 @@ namespace Authoring
     {
         [SerializeField]
         private float timerMax = 0.2f;
+        [SerializeField]
+        private float randomWalkingDistanceMin = .1f;
+        [SerializeField]
+        private float randomWalkingDistanceMax = 10f;
 
         private class ZombieSpawnerAuthoringBaker : Baker<ZombieSpawnerAuthoring>
         {
@@ -17,6 +21,9 @@ namespace Authoring
                 {
                     Timer = 0f,
                     TimerMax = authoring.timerMax,
+                    RandomWalkingDistanceMin = authoring.randomWalkingDistanceMin,
+                    RandomWalkingDistanceMax = authoring.randomWalkingDistanceMax,
+                    Random = new Unity.Mathematics.Random((uint)entity.Index),
                 };
                 AddComponent(entity,zombieSpawnerData);
             }
@@ -25,7 +32,9 @@ namespace Authoring
 
     public struct ZombieSpawnerData : IComponentData
     {
-        public float Timer;
-        public float TimerMax;
+        public float Timer, TimerMax;
+        public float RandomWalkingDistanceMin, RandomWalkingDistanceMax;
+        
+        public Unity.Mathematics.Random Random;
     }
 }

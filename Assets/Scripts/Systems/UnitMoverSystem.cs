@@ -1,5 +1,6 @@
 using Authoring;
 using MonoBehaviours;
+using Systems;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -12,34 +13,11 @@ namespace Systems
     public partial struct UnitMoverSystem : ISystem
     {
 
+        public const float REACHED_TARGET_POSITION_DISTANCE_SQ = 2f;
         [BurstCompile]
         public void OnUpdate(ref SystemState state) {
 
-            // foreach (var (localTransform, 
-            //              unitMoverData,
-            //              physicsVelocity) in
-            //          SystemAPI.Query<
-            //              RefRW<LocalTransform>, 
-            //              RefRO<UnitMoverData>,
-            //              RefRW<PhysicsVelocity>
-            //          >()) { 
-            //     
-            //     var targetPosition = unitMoverData.ValueRO.TargetPosition; //(float3)MouseWorldPosition.Instance.GetPosition();
-            //     var moveDirection = targetPosition - localTransform.ValueRW.Position; 
-            //     moveDirection = math.normalize(moveDirection);
-            //
-            //     float rotationSpeed = unitMoverData.ValueRO.RotationSpeed;
-            //     
-            //     var rot =  math.slerp(localTransform.ValueRW.Rotation, 
-            //         quaternion.LookRotation(moveDirection, math.up()), 
-            //         SystemAPI.Time.DeltaTime * rotationSpeed);
-            //     localTransform.ValueRW.Rotation = rot;
-            //
-            //     physicsVelocity.ValueRW.Angular = float3.zero;
-            //     physicsVelocity.ValueRW.Linear = moveDirection * SystemAPI.Time.DeltaTime * unitMoverData.ValueRO.MovementSpeed;
-            //
-            // }
-            UnitMoverJob job = new UnitMoverJob()
+             UnitMoverJob job = new UnitMoverJob()
             {
                 DeltaTime = SystemAPI.Time.DeltaTime
             };
@@ -50,7 +28,7 @@ namespace Systems
 }
 
 [BurstCompile]
-public partial struct UnitMoverJob : IJobEntity 
+public partial struct UnitMoverJob : IJobEntity
 {
     public float DeltaTime;
     public void Execute(ref LocalTransform localTransform, in UnitMoverData unitMoverData,
@@ -60,7 +38,7 @@ public partial struct UnitMoverJob : IJobEntity
         var moveDirection = targetPosition - localTransform.Position;
 
 
-        if (math.lengthsq(moveDirection) < 0.5f)
+        if (math.lengthsq(moveDirection) <= UnitMoverSystem.REACHED_TARGET_POSITION_DISTANCE_SQ)
         {
             physicsVelocity.Linear = float3.zero;
             physicsVelocity.Angular = float3.zero;

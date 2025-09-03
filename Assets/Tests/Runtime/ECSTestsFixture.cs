@@ -1,24 +1,22 @@
 using NUnit.Framework;
 using Unity.Entities;
-using Unity.Physics.Systems;
-using UnityEngine;
 
-namespace Tests
+namespace Tests.Runtime
 {
     /// <summary>
     /// Base class for ECS unit tests that provides common setup and teardown for World and EntityManager
     /// </summary>
-    public abstract class ECSTestsFixture
+    public abstract class EcsTestsFixture
     {
         protected World World;
-        protected EntityManager m_Manager;
+        protected EntityManager MManager;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Create a test world
             World = new World("TestWorld");
-            m_Manager = World.EntityManager;
+            MManager = World.EntityManager;
 
             OnCreate();
         }
@@ -30,7 +28,7 @@ namespace Tests
             {
                 World.Dispose();
                 World = null;
-                m_Manager = default;
+                MManager = default;
             }
         }
 
@@ -46,7 +44,7 @@ namespace Tests
             // Clean up any entities created during the test
             if (World != null && World.IsCreated)
             {
-                m_Manager.DestroyEntity(m_Manager.UniversalQuery);
+                MManager.DestroyEntity(MManager.UniversalQuery);
             }
             OnTearDown();
         }
