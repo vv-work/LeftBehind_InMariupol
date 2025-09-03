@@ -22,18 +22,18 @@ namespace Authoring
             public override void Bake(ShootAttackAuthoring authoring)
             {
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
-                var bulletOffset = Vector3.zero;
-                    
-                if(authoring._bulletSpawnerPoint!=null)
-                     bulletOffset =authoring._bulletSpawnerPoint.localPosition;
+                var bulletOffset = authoring._bulletSpawnerPoint != null 
+                    ? (float3)authoring._bulletSpawnerPoint.localPosition 
+                    : float3.zero;
                 
                 var shootAttack = new ShootAttackData() {
                     TimerMax = authoring._timerMax,
                     Damage = authoring._damage,
-                    AttackDistance =  authoring._attackDistance,
-                    BulletSpawnLocalPosition = bulletOffset
+                    AttackDistance = authoring._attackDistance,
+                    BulletSpawnLocalPosition = bulletOffset,
+                    Timer = 0f
                 };
-                AddComponent(entity,shootAttack);
+                AddComponent(entity, shootAttack);
             }
         }
     }

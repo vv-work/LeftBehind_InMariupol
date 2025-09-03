@@ -8,6 +8,7 @@ namespace Authoring
         
         public GameObject VisualEntity;
         public float showScale = 1.5f;
+        
         private class SelectedAuthoringBaker : Baker<SelectedAuthoring>
         {
             public override void Bake(SelectedAuthoring authoring)
@@ -18,19 +19,17 @@ namespace Authoring
                     visualEntity = GetEntity(authoring.VisualEntity, TransformUsageFlags.Dynamic),
                     showScale = authoring.showScale
                 });
-                SetComponentEnabled<Selected>(entity,false);
+                SetComponentEnabled<Selected>(entity, false);
             }
         }
     }
-}
 
-public struct Selected : IComponentData, IEnableableComponent
-{
-    public Entity visualEntity;
-    public float showScale;
-    
-    public bool OnSelected;
-    public bool OnDeselected;
-
-
+    public struct Selected : IComponentData, IEnableableComponent
+    {
+        public Entity visualEntity;
+        public float showScale;
+        
+        public bool OnSelected;
+        public bool OnDeselected;
+    }
 }

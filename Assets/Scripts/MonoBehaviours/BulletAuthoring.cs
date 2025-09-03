@@ -4,13 +4,12 @@ using UnityEngine;
 namespace MonoBehaviours
 {
     public class BulletAuthoring : MonoBehaviour
-   {
- 
-       [SerializeField]
+    {
+        [SerializeField]
         private float _speed = 2f;
 
-       [SerializeField] private int _damageAmount = 5;
-
+        [SerializeField] 
+        private int _damageAmount = 5;
 
         private class BulletAuthoringBaker : Baker<BulletAuthoring>
         {
@@ -19,12 +18,10 @@ namespace MonoBehaviours
                 Entity entity = GetEntity(TransformUsageFlags.Dynamic);
                 var bullet = new BulletData()
                 {
-                        Speed = authoring._speed,
-                        DamageAmount = authoring._damageAmount,
-
+                    Speed = authoring._speed,
+                    DamageAmount = authoring._damageAmount,
                 };
-                AddComponent(entity,bullet);
-                
+                AddComponent(entity, bullet);
             }
         }
     }

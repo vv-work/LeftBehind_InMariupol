@@ -1,0 +1,30 @@
+{
+    "name": "LeftBehindInMariupol.Tests",
+    "rootNamespace": "",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Unity.Entities",
+        "Unity.Entities.Hybrid",
+        "Unity.Physics",
+        "Unity.Physics.Hybrid", 
+        "Unity.Mathematics",
+        "Unity.Transforms",
+        "Unity.Burst",
+        "Unity.Collections",
+        "LeftBehindInMariupol"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

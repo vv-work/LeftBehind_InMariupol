@@ -14,12 +14,15 @@ namespace Authoring
             public override void Bake(ShootVictimAuthoring authoring)
             {
                 Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+                var targetPoint = authoring._targetPoint != null 
+                    ? (float3)authoring._targetPoint.localPosition 
+                    : float3.zero;
+                    
                 var shootVictim = new ShootVictim()
                 { 
-                    TargetPoint = authoring._targetPoint.localPosition,
+                    TargetPoint = targetPoint,
                 };
-                AddComponent(entity,shootVictim);
-                
+                AddComponent(entity, shootVictim);
             }
         }
     }

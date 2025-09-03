@@ -20,15 +20,14 @@ namespace Authoring
             public override void Bake(FindTargetAuthoring authoring)
             {
               Entity entity  = GetEntity(TransformUsageFlags.Dynamic);
-              var fiendTarget = new FindTargetData
+              var findTargetData = new FindTargetData
               {
                   Range = authoring._range,
                   TargetFaction = authoring._targetFaction,
                   TimerMax = authoring._timerMax,
-                  
-                  // TargetEntity = Entity.Null // Initialize with a default value
+                  Timer = 0f
               };
-              AddComponent(entity, fiendTarget);
+              AddComponent(entity, findTargetData);
             }
         }
     }

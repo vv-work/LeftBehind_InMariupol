@@ -22,6 +22,7 @@ namespace MonoBehaviours
             }
         }
     }
+    
     public struct EntitiesReferencesData : IComponentData
     {
         public Entity BulletDataPrefabEntity;
