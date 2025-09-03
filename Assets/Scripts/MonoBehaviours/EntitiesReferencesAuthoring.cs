@@ -6,6 +6,7 @@ namespace MonoBehaviours
     public class EntitiesReferencesAuthoring : MonoBehaviour
     {
         [SerializeField] private GameObject bulletDataPrefab;
+        [SerializeField] private GameObject zombiePrefab;
         
         private class EntitiesReferencesBaker : Baker<EntitiesReferencesAuthoring>
         {
@@ -15,6 +16,7 @@ namespace MonoBehaviours
                 var entitiesReferencesData = new EntitiesReferencesData()
                 {
                     BulletDataPrefabEntity = GetEntity(authoring.bulletDataPrefab, TransformUsageFlags.Dynamic),
+                    ZombieEntity = GetEntity(authoring.zombiePrefab, TransformUsageFlags.Dynamic)
                 };
                 AddComponent(entity, entitiesReferencesData);
             }
@@ -23,5 +25,6 @@ namespace MonoBehaviours
     public struct EntitiesReferencesData : IComponentData
     {
         public Entity BulletDataPrefabEntity;
+        public Entity ZombieEntity;
     }
 }

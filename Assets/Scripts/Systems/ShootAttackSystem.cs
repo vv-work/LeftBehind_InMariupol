@@ -4,7 +4,6 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Systems
 {
@@ -13,14 +12,15 @@ namespace Systems
     {
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
             state.RequireForUpdate<EntitiesReferencesData>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
+            // ECB from EndSimulation... is played back automatically by the ECB system; do NOT call Playback() or Dispose()
+            var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>()
                                .CreateCommandBuffer(state.WorldUnmanaged);
 
             var refs = SystemAPI.GetSingleton<EntitiesReferencesData>();
@@ -42,7 +42,7 @@ namespace Systems
                     continue; 
                 } 
                 unitMover.ValueRW.TargetPosition = localTransform.ValueRO.Position; 
-                
+            
                 float3 aimDirection = targetLocalTransform.Position - localTransform.ValueRO.Position;
                 aimDirection = math.normalize(aimDirection);
                 
@@ -56,17 +56,13 @@ namespace Systems
                 if (shootAttack.ValueRW.Timer > 0f) 
                     continue; 
                 
-                shootAttack.ValueRW.Timer = shootAttack.ValueRW.TimerMax;
-
-                
-                    
-                
+                shootAttack.ValueRW.Timer = shootAttack.ValueRW.TimerMax; 
 
                 // Spawn via ECB (deferred)
                 var bullet = ecb.Instantiate(refs.BulletDataPrefabEntity);
 
                 // Initialize entirely via ECB
-                float3 bulletSpawnPosition = localTransform.ValueRO.TransformPoint(shootAttack.ValueRO.BulletSpawnLocalPosition);
+                float3 bulletSpawnPosition = localTransform.ValueRW.TransformPoint(shootAttack.ValueRO.BulletSpawnLocalPosition);
                 ecb.SetComponent(bullet, LocalTransform.FromPosition(bulletSpawnPosition));
 
                 // BulletData
